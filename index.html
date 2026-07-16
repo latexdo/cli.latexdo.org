@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LatexDo CLI</title>
+    <meta
+      name="description"
+      content="Install and use the LatexDo CLI. Terminal install command, requirements, commands, options, environment variables, installer behavior, and troubleshooting."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#f6f7f9" />
+    <link rel="canonical" href="https://cli.latexdo.org/" />
+    <link rel="icon" type="image/svg+xml" href="https://latexdo.org/assets/icon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LatexDo" />
+    <meta property="og:title" content="LatexDo CLI" />
+    <meta
+      property="og:description"
+      content="Install the local LatexDo editor from the terminal and use the full CLI reference."
+    />
+    <meta property="og:url" content="https://cli.latexdo.org/" />
+    <meta property="og:image" content="https://latexdo.org/assets/social-preview.svg" />
+
+    <style>
+      :root {
+        color-scheme: light;
+        --page: #f6f7f9;
+        --surface: #ffffff;
+        --surface-soft: #f2f4f7;
+        --ink: #111318;
+        --ink-soft: #303642;
+        --muted: #667085;
+        --border: #d7dde7;
+        --hairline: rgb(17 19 24 / 10%);
+        --blue: #0f6fff;
+        --blue-strong: #004ec2;
+        --code: #111318;
+        --radius: 8px;
+        --max: 1180px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 84px;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--page);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      code {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      .skip-link {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 100;
+        transform: translateY(-140%);
+        border-radius: var(--radius);
+        background: var(--ink);
+        color: white;
+        padding: 10px 12px;
+        text-decoration: none;
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 1px solid rgb(215 221 231 / 76%);
+        background: rgb(246 247 249 / 86%);
+        backdrop-filter: blur(20px);
+      }
+
+      .nav-shell {
+        display: flex;
+        width: min(var(--max), calc(100% - 32px));
+        min-height: 66px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin: 0 auto;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 18px;
+        font-weight: 820;
+        text-decoration: none;
+      }
+
+      .brand img {
+        width: 36px;
+        height: 36px;
+      }
+
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .nav-links a {
+        min-height: 36px;
+        border: 1px solid transparent;
+        border-radius: var(--radius);
+        padding: 8px 10px;
+        text-decoration: none;
+      }
+
+      .nav-links a:hover,
+      .nav-links a:focus-visible {
+        border-color: var(--hairline);
+        background: var(--surface);
+        color: var(--ink);
+        outline: 0;
+      }
+
+      .section-band {
+        padding: 88px 0;
+        border-bottom: 1px solid var(--hairline);
+      }
+
+      .section-band:nth-of-type(even) {
+        background: var(--surface);
+      }
+
+      .hero {
+        background: #eef3f7;
+      }
+
+      .section-inner {
+        width: min(var(--max), calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .section-heading {
+        display: grid;
+        max-width: 820px;
+        gap: 14px;
+        margin-bottom: 30px;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--blue-strong);
+        font-size: 12px;
+        font-weight: 860;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 900px;
+        margin-bottom: 18px;
+        color: var(--ink);
+        font-size: 74px;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 0;
+        color: var(--ink);
+        font-size: 46px;
+        line-height: 1.06;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        margin-bottom: 10px;
+        font-size: 21px;
+        line-height: 1.22;
+        letter-spacing: 0;
+      }
+
+      .section-heading p:not(.eyebrow),
+      .lede {
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .install-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: center;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        padding: 18px;
+        box-shadow: 0 12px 34px rgb(17 19 24 / 7%);
+      }
+
+      .command-line {
+        min-width: 0;
+        overflow-x: auto;
+        border-radius: var(--radius);
+        background: var(--code);
+        color: #f6f8fb;
+        padding: 16px;
+      }
+
+      .command-line code {
+        white-space: nowrap;
+        font-size: 14px;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .button {
+        display: inline-flex;
+        min-height: 40px;
+        min-width: 152px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: var(--radius);
+        padding: 0 18px;
+        font-weight: 760;
+        text-decoration: none;
+      }
+
+      .button.primary {
+        background: var(--ink);
+        color: white;
+      }
+
+      .button.secondary {
+        border-color: var(--hairline);
+        background: rgb(255 255 255 / 78%);
+        color: var(--ink);
+      }
+
+      .grid-3,
+      .grid-4,
+      .command-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .command-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .card,
+      .command-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        padding: 20px;
+        box-shadow: 0 12px 34px rgb(17 19 24 / 6%);
+      }
+
+      .card p,
+      .command-card p {
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .command-card {
+        display: grid;
+        align-content: start;
+        gap: 12px;
+        min-height: 150px;
+      }
+
+      .command-card > code {
+        display: block;
+        color: var(--blue-strong);
+        font-size: 14px;
+        font-weight: 760;
+        overflow-wrap: anywhere;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 12px 34px rgb(17 19 24 / 6%);
+      }
+
+      table {
+        width: 100%;
+        min-width: 820px;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #f8fafc;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 840;
+        text-transform: uppercase;
+      }
+
+      td {
+        color: var(--muted);
+      }
+
+      td:first-child,
+      td:nth-child(2) {
+        color: var(--ink-soft);
+        white-space: nowrap;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .faq-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      details {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--surface);
+        padding: 18px 20px;
+      }
+
+      summary {
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: 820;
+      }
+
+      details p {
+        margin: 14px 0 0;
+        color: var(--muted);
+      }
+
+      .site-footer {
+        padding: 34px 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .footer-inner {
+        display: flex;
+        width: min(var(--max), calc(100% - 32px));
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 0 auto;
+      }
+
+      .footer-inner a {
+        color: var(--ink);
+        font-weight: 760;
+        text-decoration: none;
+      }
+
+      @media (max-width: 1020px) {
+        .grid-4,
+        .grid-3,
+        .command-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        .nav-shell,
+        .footer-inner {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .nav-links,
+        .button-row {
+          justify-content: flex-start;
+        }
+
+        h1 {
+          font-size: 44px;
+        }
+
+        h2 {
+          font-size: 34px;
+        }
+
+        .section-band {
+          padding: 68px 0;
+        }
+
+        .install-card,
+        .grid-4,
+        .grid-3,
+        .command-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+
+    <header class="site-header">
+      <nav class="nav-shell" aria-label="Primary navigation">
+        <a class="brand" href="https://latexdo.org" aria-label="LatexDo home">
+          <img src="https://latexdo.org/assets/icon.svg" alt="" width="36" height="36" />
+          <span>LatexDo CLI</span>
+        </a>
+        <div class="nav-links">
+          <a href="#commands">Commands</a>
+          <a href="#requirements">Requirements</a>
+          <a href="#configuration">Configuration</a>
+          <a href="#troubleshooting">Troubleshooting</a>
+          <a href="https://latexdo.org">LatexDo</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="content">
+      <section class="section-band hero" aria-labelledby="cli-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow">Terminal install</p>
+            <h1 id="cli-title">Install the local editor with one command.</h1>
+            <p class="lede">
+              The CLI keeps a cached copy of the LatexDo source, installs npm
+              dependencies when they change, starts the local web editor, and opens
+              the localhost URL in your browser.
+            </p>
+          </div>
+
+          <div class="install-card">
+            <div class="command-line" aria-label="LatexDo CLI install command">
+              <code>curl -fsSL https://cli.latexdo.org/install.sh | bash</code>
+            </div>
+            <div class="button-row">
+              <a class="button primary" href="install.sh">View install script</a>
+              <a class="button secondary" href="https://github.com/latexdo/cli.latexdo.org">CLI source</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-band" aria-labelledby="workflow-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow">Local workflow</p>
+            <h2 id="workflow-title">Run LatexDo from your terminal.</h2>
+            <p>
+              The <code>latexdo</code> command is the terminal entry point for
+              launching, updating, checking, and resetting the local LatexDo app.
+            </p>
+          </div>
+          <div class="grid-4">
+            <article class="card">
+              <h3>Cached source</h3>
+              <p>Keeps the LatexDo app in a local cache so repeated launches are fast.</p>
+            </article>
+            <article class="card">
+              <h3>Dependency checks</h3>
+              <p>Installs npm dependencies only when the project dependencies change.</p>
+            </article>
+            <article class="card">
+              <h3>Localhost editor</h3>
+              <p>Starts the web editor locally and opens the browser URL for you.</p>
+            </article>
+            <article class="card">
+              <h3>Portable config</h3>
+              <p>Uses environment variables for cache location, source repo, branch, host, and port.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="commands" class="section-band" aria-labelledby="commands-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow">Commands</p>
+            <h2 id="commands-title">Everything the CLI can do.</h2>
+          </div>
+          <div class="command-grid">
+            <article class="command-card">
+              <code>latexdo</code>
+              <p>Default command. Starts the local editor, updates cached source, installs dependencies when needed, and opens the browser.</p>
+            </article>
+            <article class="command-card">
+              <code>latexdo open</code>
+              <p>Same as the default command. <code>latexdo serve</code> is also accepted.</p>
+            </article>
+            <article class="command-card">
+              <code>latexdo open --host 127.0.0.1 --port 5173</code>
+              <p>Choose the bind host and preferred port. If the port is busy, LatexDo uses the next free port.</p>
+            </article>
+            <article class="command-card">
+              <code>latexdo open --no-update</code>
+              <p>Start from the cached app without fetching the latest source first.</p>
+            </article>
+            <article class="command-card">
+              <code>latexdo update</code>
+              <p>Fetch the configured app branch and install npm dependencies without starting the editor.</p>
+            </article>
+            <article class="command-card">
+              <code>latexdo doctor</code>
+              <p>Print cache paths, repo settings, Git, Node.js, npm, curl, and latexmk status.</p>
+            </article>
+            <article class="command-card">
+              <code>latexdo path</code>
+              <p>Print the local cached app directory.</p>
+            </article>
+            <article class="command-card">
+              <code>latexdo reset</code>
+              <p>Remove the cached LatexDo app so the next launch performs a clean clone.</p>
+            </article>
+            <article class="command-card">
+              <code>latexdo help</code>
+              <p>Show command usage and environment options.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="requirements" class="section-band" aria-labelledby="requirements-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow">Requirements</p>
+            <h2 id="requirements-title">Git, Node.js 20+, and npm.</h2>
+            <p>
+              The CLI uses Git to cache the LatexDo source and npm to install and
+              run the local web editor.
+            </p>
+          </div>
+          <div class="grid-3">
+            <article class="card">
+              <h3>Required</h3>
+              <p>Install Git, Node.js 20 or newer, npm, and a browser before running <code>latexdo</code>.</p>
+            </article>
+            <article class="card">
+              <h3>Installer download</h3>
+              <p>The install script uses <code>curl</code> or <code>wget</code> to download the executable CLI script.</p>
+            </article>
+            <article class="card">
+              <h3>PDF compilation</h3>
+              <p>Browser editing works without a TeX distribution, but local PDF compilation needs <code>latexmk</code>.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="configuration" class="section-band" aria-labelledby="configuration-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow">Configuration</p>
+            <h2 id="configuration-title">Environment variables.</h2>
+            <p>
+              Defaults are designed for a normal local install. Override them when
+              you need a custom cache, fork, branch, binary directory, or local port.
+            </p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Default</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>LATEXDO_HOME</code></td>
+                  <td><code>~/.latexdo</code></td>
+                  <td>Base cache directory for CLI state and source.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_APP_DIR</code></td>
+                  <td><code>$LATEXDO_HOME/app</code></td>
+                  <td>Local Git checkout used by the editor.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_APP_REPO</code></td>
+                  <td><code>https://github.com/latexdo/latexdo.git</code></td>
+                  <td>Source repository cloned by the CLI.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_APP_BRANCH</code></td>
+                  <td><code>main</code></td>
+                  <td>Branch fetched and checked out during updates.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_HOST</code></td>
+                  <td><code>127.0.0.1</code></td>
+                  <td>Local host used by the Vite dev server.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_PORT</code></td>
+                  <td><code>5173</code></td>
+                  <td>Preferred local port. The CLI finds the next free port if needed.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_NO_OPEN</code></td>
+                  <td><code>0</code></td>
+                  <td>Set to <code>1</code> to print the localhost URL without opening a browser.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_SKIP_UPDATE</code></td>
+                  <td><code>0</code></td>
+                  <td>Set to <code>1</code> to start from cached source without fetching first.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_BIN_DIR</code></td>
+                  <td><code>~/.local/bin</code></td>
+                  <td>Install location used by <code>install.sh</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_CLI_URL</code></td>
+                  <td><code>https://latexdo.org/bin/latexdo</code></td>
+                  <td>CLI script URL downloaded by <code>install.sh</code>.</td>
+                </tr>
+                <tr>
+                  <td><code>LATEXDO_SKIP_BOOTSTRAP</code></td>
+                  <td><code>0</code></td>
+                  <td>Set to <code>1</code> to install the CLI without immediately running <code>latexdo update</code>.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-band" aria-labelledby="install-details-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow">Install details</p>
+            <h2 id="install-details-title">What the installer changes.</h2>
+          </div>
+          <div class="grid-3">
+            <article class="card">
+              <h3>Binary location</h3>
+              <p>The CLI is installed as <code>~/.local/bin/latexdo</code> unless <code>LATEXDO_BIN_DIR</code> is set.</p>
+            </article>
+            <article class="card">
+              <h3>PATH check</h3>
+              <p>If the install directory is not on <code>PATH</code>, the installer prints the shell export line to add.</p>
+            </article>
+            <article class="card">
+              <h3>Bootstrap</h3>
+              <p>After install, it runs <code>latexdo update</code> to clone the app and install dependencies.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="troubleshooting" class="section-band" aria-labelledby="troubleshooting-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow">Troubleshooting</p>
+            <h2 id="troubleshooting-title">Common fixes.</h2>
+          </div>
+          <div class="faq-list">
+            <details>
+              <summary><code>latexdo</code> is not found after installation</summary>
+              <p>Add <code>~/.local/bin</code> to your shell <code>PATH</code>, or install to a directory already on <code>PATH</code> with <code>LATEXDO_BIN_DIR</code>.</p>
+            </details>
+            <details>
+              <summary>Node.js version error</summary>
+              <p>Install Node.js 20 or newer, then run <code>latexdo doctor</code> to confirm the active runtime.</p>
+            </details>
+            <details>
+              <summary>Port 5173 is already in use</summary>
+              <p>The CLI automatically scans for the next free port. Use <code>--port</code> or <code>LATEXDO_PORT</code> to choose a different preferred port.</p>
+            </details>
+            <details>
+              <summary>Cached source looks broken</summary>
+              <p>Run <code>latexdo reset</code>, then run <code>latexdo update</code> or <code>latexdo</code> to clone a clean copy.</p>
+            </details>
+            <details>
+              <summary>Local PDF compilation is unavailable</summary>
+              <p>Install a TeX distribution that provides <code>latexmk</code>. The browser editor can still open without it.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>&copy; 2026 LatexDo. CLI for the local web editor.</span>
+        <a href="https://github.com/latexdo/cli.latexdo.org">Source on GitHub</a>
+      </div>
+    </footer>
+  </body>
+</html>
