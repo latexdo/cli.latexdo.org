@@ -50,6 +50,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build static site
+        run: npm run build
+
       - name: Check shell scripts
         run: |
           sh -n install.sh
