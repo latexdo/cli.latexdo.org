@@ -16,6 +16,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "build": "node scripts/build-site.mjs",
     "doctor": "bin/latexdo doctor"
   }
 }
